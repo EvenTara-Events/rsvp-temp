@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>RSVP</title>
+
+<!-- GOOGLE FONTS -->
+
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+
+/* RESET */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+
+    min-height:100vh;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    overflow:hidden;
+
+    font-family:'Montserrat',sans-serif;
+
+    color:white;
+
+    background:black;
+
+    position:relative;
+}
+
+/* VIDEO BACKGROUND */
+
+.bg-video{
+    position:absolute;
+
+    top:50%;
+    left:50%;
+
+    width:100%;
+    height:100%;
+
+    object-fit:cover;
+
+    transform:translate(-50%,-50%) scale(1);
+
+    z-index:-5;
+
+    animation:videoZoom 18s ease-in-out infinite alternate;
+}
+
+/* IMAGE FALLBACK */
+
+.bg-image{
+    position:absolute;
+    inset:0;
+
+    background-image:url('background.jpg');
+
+    background-size:cover;
+    background-position:center center;
+    background-repeat:no-repeat;
+
+    z-index:-6;
+
+    animation:imageZoom 18s ease-in-out infinite alternate;
+}
+
+/* DARK OVERLAY */
+
+.overlay{
+    position:absolute;
+    inset:0;
+
+    background:
+    linear-gradient(
+        to bottom,
+        rgba(0,0,0,0.25),
+        rgba(0,0,0,0.70)
+    );
+
+    z-index:-4;
+}
+
+/* FILM GRAIN */
+
+.overlay::after{
+    content:'';
+
+    position:absolute;
+    inset:0;
+
+    background:url('grain.png');
+
+    opacity:0.05;
+
+    mix-blend-mode:soft-light;
+}
+
+/* CINEMATIC BLACK BARS */
+
+body::before,
+body::after{
+
+    content:'';
+
+    position:fixed;
+
+    left:0;
+
+    width:100%;
+    height:35px;
+
+    background:black;
+
+    z-index:9999;
+}
+
+body::before{
+    top:0;
+}
+
+body::after{
+    bottom:0;
+}
+
+/* FLOATING PARTICLES */
+
+.particles{
+    position:absolute;
+    inset:0;
+
+    overflow:hidden;
+
+    z-index:-2;
+}
+
+.particles span{
+
+    position:absolute;
+
+    width:4px;
+    height:4px;
+
+    border-radius:50%;
+
+    background:rgba(255,255,255,0.5);
+
+    animation:float 12s linear infinite;
+}
+
+/* RSVP CONTENT */
+
+.rsvp-wrapper{
+
+    width:81%;
+    max-width:468px;
+
+    text-align:center;
+
+    animation:fadeUp 1.5s ease;
+
+    transform:scale(0.9);
+}
+
+/* SUBTITLE */
+
+.subtitle{
+
+    letter-spacing:5px;
+    text-transform:uppercase;
+
+    font-size:11px;
+
+    margin-bottom:18px;
+
+    opacity:0.85;
+}
+
+/* TITLE */
+
+.main-title{
+
+    font-family:'Cormorant Garamond',serif;
+
+    font-size:70px;
+    font-weight:300;
+
+    line-height:1;
+
+    margin-bottom:15px;
+
+    animation:glow 5s infinite alternate;
+}
+
+/* DESCRIPTION */
+
+.description{
+
+    line-height:2;
+
+    font-size:14px;
+
+    opacity:0.9;
+
+    margin-bottom:40px;
+}
+
+/* COUNTDOWN */
+
+.countdown-label{
+
+    letter-spacing:4px;
+
+    text-transform:uppercase;
+
+    font-size:11px;
+
+    margin-bottom:20px;
+
+    opacity:0.8;
+}
+
+#countdown{
+
+    display:flex;
+    justify-content:center;
+    gap:14px;
+
+    margin-bottom:35px;
+
+    flex-wrap:wrap;
+}
+
+.time-box{
+
+    width:85px;
+    height:85px;
+
+    border-radius:18px;
+
+    border:1px solid rgba(255,255,255,0.15);
+
+    background:rgba(255,255,255,0.04);
+
+    backdrop-filter:blur(5px);
+
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+
+    transition:0.4s ease;
+}
+
+.time-box:hover{
+
+    transform:translateY(-5px);
+
+    background:rgba(255,255,255,0.08);
+
+    box-shadow:0 0 25px rgba(255,255,255,0.08);
+}
+
+.time-number{
+
+    font-size:28px;
+    font-weight:600;
+
+    font-family:'Cormorant Garamond',serif;
+}
+
+.time-label{
+
+    font-size:10px;
+
+    letter-spacing:2px;
+
+    margin-top:4px;
+
+    opacity:0.8;
+}
+
+/* INPUTS */
+
+input{
+
+    width:100%;
+
+    padding:16px 18px;
+
+    margin-bottom:18px;
+
+    border-radius:14px;
+
+    border:1px solid rgba(255,255,255,0.15);
+
+    background:rgba(255,255,255,0.04);
+
+    backdrop-filter:blur(5px);
+
+    color:white;
+
+    font-size:14px;
+
+    outline:none;
+
+    transition:0.4s ease;
+}
+
+input:focus{
+
+    border:1px solid rgba(255,255,255,0.4);
+
+    background:rgba(255,255,255,0.08);
+}
+
+input::placeholder{
+    color:rgba(255,255,255,0.6);
+}
+
+/* BUTTONS */
+
+button{
+
+    width:100%;
+
+    padding:16px;
+
+    margin-bottom:16px;
+
+    border-radius:50px;
+
+    border:1px solid rgba(255,255,255,0.18);
+
+    background:rgba(255,255,255,0.06);
+
+    color:white;
+
+    letter-spacing:3px;
+
+    font-size:12px;
+
+    text-transform:uppercase;
+
+    cursor:pointer;
+
+    transition:0.4s ease;
+
+    position:relative;
+
+    overflow:hidden;
+}
+
+button::before{
+
+    content:'';
+
+    position:absolute;
+
+    top:0;
+    left:-100%;
+
+    width:100%;
+    height:100%;
+
+    background:white;
+
+    transition:0.5s ease;
+
+    z-index:-1;
+}
+
+button:hover::before{
+    left:0;
+}
+
+button:hover{
+
+    color:black;
+
+    transform:translateY(-4px);
+}
+
+/* MESSAGE */
+
+#message{
+
+    margin-top:20px;
+
+    font-size:14px;
+
+    letter-spacing:1px;
+
+    font-weight:500;
+}
+
+/* HIDE PLUS ONE */
+
+#plusOneName{
+    display:none;
+}
+
+/* ANIMATIONS */
+
+@keyframes glow{
+
+    from{
+        text-shadow:0 0 10px rgba(255,255,255,0.1);
+    }
+
+    to{
+        text-shadow:0 0 25px rgba(255,255,255,0.35);
+    }
+
+}
+
+@keyframes float{
+
+    from{
+        transform:translateY(100vh) scale(0);
+    }
+
+    to{
+        transform:translateY(-10vh) scale(1);
+    }
+
+}
+
+@keyframes fadeUp{
+
+    from{
+        opacity:0;
+        transform:translateY(60px);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+
+}
+
+@keyframes videoZoom{
+
+    from{
+        transform:translate(-50%,-50%) scale(1);
+    }
+
+    to{
+        transform:translate(-50%,-50%) scale(1.08);
+    }
+
+}
+
+@keyframes imageZoom{
+
+    from{
+        transform:scale(1);
+    }
+
+    to{
+        transform:scale(1.08);
+    }
+
+}
+
+/* MOBILE */
+
+@media(max-width:768px){
+
+    .rsvp-wrapper{
+        transform:scale(0.9);
+    }
+
+    .main-title{
+        font-size:46px;
+    }
+
+    .time-box{
+        width:65px;
+        height:65px;
+    }
+
+    .time-number{
+        font-size:22px;
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- VIDEO -->
+
+<video autoplay muted loop playsinline class="bg-video">
+    <source src="videos/rsvp.mp4" type="video/mp4">
+</video>
+
+<!-- IMAGE -->
+
+<div class="bg-image"></div>
+
+<!-- OVERLAY -->
+
+<div class="overlay"></div>
+
+<!-- PARTICLES -->
+
+<div class="particles">
+
+    <span style="left:10%; animation-delay:0s;"></span>
+    <span style="left:20%; animation-delay:2s;"></span>
+    <span style="left:35%; animation-delay:4s;"></span>
+    <span style="left:50%; animation-delay:1s;"></span>
+    <span style="left:65%; animation-delay:5s;"></span>
+    <span style="left:80%; animation-delay:3s;"></span>
+    <span style="left:90%; animation-delay:6s;"></span>
+
+</div>
+
+<!-- RSVP CONTENT -->
+
+<div class="rsvp-wrapper">
+
+    <p class="subtitle">
+        Wedding Celebration
+    </p>
+
+    <h1 class="main-title">
+        RSVP
+    </h1>
+
+    <p class="description">
+        Kindly confirm your attendance and celebrate
+        this unforgettable moment with us.
+    </p>
+
+    <!-- COUNTDOWN -->
+
+    <div class="countdown-label">
+        Countdown To Forever
+    </div>
+
+    <div id="countdown">
+
+        <div class="time-box">
+            <span id="days" class="time-number">00</span>
+            <span class="time-label">DAYS</span>
+        </div>
+
+        <div class="time-box">
+            <span id="hours" class="time-number">00</span>
+            <span class="time-label">HOURS</span>
+        </div>
+
+        <div class="time-box">
+            <span id="minutes" class="time-number">00</span>
+            <span class="time-label">MINUTES</span>
+        </div>
+
+        <div class="time-box">
+            <span id="seconds" class="time-number">00</span>
+            <span class="time-label">SECONDS</span>
+        </div>
+
+    </div>
+
+    <!-- INPUT -->
+
+    <input
+        type="text"
+        id="name"
+        placeholder="Your Full Name"
+        required
+    >
+
+    <!-- PLUS ONE -->
+
+    <button type="button" id="plusOneBtn">
+        Add Plus One
+    </button>
+
+    <input
+        type="text"
+        id="plusOneName"
+        placeholder="Plus One Name"
+    >
+
+    <!-- RSVP -->
+
+    <button onclick="submitRSVP()">
+        Confirm RSVP
+    </button>
+
+    <p id="message"></p>
+
+</div>
+
+<script>
+
+/* EVENT DATE */
+
+const eventDate =
+new Date("2026-05-23 16:00:00").getTime();
+
+/* COUNTDOWN */
+
+setInterval(() => {
+
+    const now = new Date().getTime();
+
+    const gap = eventDate - now;
+
+    const days = Math.floor(
+        gap / (1000 * 60 * 60 * 24)
+    );
+
+    const hours = Math.floor(
+        (gap / (1000 * 60 * 60)) % 24
+    );
+
+    const minutes = Math.floor(
+        (gap / (1000 * 60)) % 60
+    );
+
+    const seconds = Math.floor(
+        (gap / 1000) % 60
+    );
+
+    document.getElementById("days").innerText =
+    String(days).padStart(2, '0');
+
+    document.getElementById("hours").innerText =
+    String(hours).padStart(2, '0');
+
+    document.getElementById("minutes").innerText =
+    String(minutes).padStart(2, '0');
+
+    document.getElementById("seconds").innerText =
+    String(seconds).padStart(2, '0');
+
+}, 1000);
+
+/* PLUS ONE */
+
+let plusOneEnabled = false;
+
+document.getElementById("plusOneBtn")
+.addEventListener("click", function() {
+
+    plusOneEnabled = !plusOneEnabled;
+
+    const plusOneField =
+    document.getElementById("plusOneName");
+
+    if (plusOneEnabled) {
+
+        plusOneField.style.display = "block";
+
+        this.innerText = "Remove Plus One";
+
+    } else {
+
+        plusOneField.style.display = "none";
+
+        plusOneField.value = "";
+
+        this.innerText = "Add Plus One";
+
+    }
+
+});
+
+/* RSVP */
+
+function submitRSVP() {
+
+    const name =
+    document.getElementById("name").value;
+
+    const plusOneName =
+    document.getElementById("plusOneName").value;
+
+    if (!name) {
+
+        alert("Please enter your name");
+
+        return;
+    }
+
+    fetch(
+        "https://script.google.com/macros/s/AKfycbxYbqPxe9eIQbwU2TcfXWp-5e-A9AouzAyYdw3OnAUCIQtlaGsQvtWLmNxpxC-5xbfVJw/exec",
+        {
+            method: "POST",
+
+            body: JSON.stringify({
+                name: name,
+                plusOne: plusOneEnabled,
+                plusOneName: plusOneName
+            })
+        }
+    )
+
+    .then(res => res.json())
+
+    .then(data => {
+
+        const msg =
+        document.getElementById("message");
+
+        if (data.status === "duplicate") {
+
+            msg.innerText =
+            "You have already RSVP'd.";
+
+            msg.style.color = "#f5c542";
+
+        } else {
+
+            msg.innerText =
+            "Reservation Confirmed.";
+
+            msg.style.color = "#d4ffd4";
+
+        }
+
+    })
+
+    .catch(() => {
+
+        alert("Error submitting RSVP");
+
+    });
+
+}
+
+</script>
+
+</body>
+</html>
